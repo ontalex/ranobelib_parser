@@ -1,0 +1,23 @@
+{
+  "name": "fastify-ts-mongo-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc -p .",
+    "start": "node dist/index.js",
+    "seed": "ts-node-dev --transpile-only scripts/seed.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1",
+    "mongoose": "^8.19.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.13",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}
