@@ -25,9 +25,24 @@ export interface Data {
     bundle_id?: any;
     bundle?: any;
     publish_at?: any;
-    type: string;
-    content: string;
+    type: "doc" | "chapter";
+    content: string | DocContent;
     attachments: any[];
+}
+
+export type DocContent = DocContentPice[];
+export interface DocContentPice {
+    type: string | "paragraph" | "image";
+    attrs?: {
+        images: {
+            image: string;
+        }[];
+    };
+    content?: {
+        type: string | "hardBreak" | "text";
+        marks: { type: "bold" | "italic" }[];
+        text?: string;
+    }[];
 }
 
 export interface Team {

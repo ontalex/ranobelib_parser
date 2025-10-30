@@ -17,9 +17,9 @@ async function mongooseConnector(app: FastifyInstance) {
     if (mongoose.connection.readyState === 0) {
         await mongoose.connect(uri, {
             serverSelectionTimeoutMS,
-            dbName: "fastify-ts-ranobe-parser",
-            user: "ruser1",
-            pass: "rpassw1",
+            dbName: process.env.MONGODB_NAME || "fastify-ts-ranobe-parser",
+            user: process.env.MONGODB_USERNAME || "ruser1",
+            pass: process.env.MONGODB_PASSWORD || "rpassw1",
         });
     }
 
