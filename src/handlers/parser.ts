@@ -1,1 +1,3 @@
-export function parseByTitle(name: string) {}
+export function parseByTitle(name: string) {
+    //
+}

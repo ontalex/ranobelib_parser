@@ -1,4 +1,8 @@
-import type { FastifyInstance, FastifyPluginOptions } from "fastify";
+import type {
+    FastifyInstance,
+    FastifyPluginOptions,
+    RequestGenericInterface,
+} from "fastify";
 import { Title } from "../models/Title";
 
 type CreateTitleBody = {
@@ -6,6 +10,10 @@ type CreateTitleBody = {
     sourceId?: string;
     url?: string;
     tags?: string[];
+};
+
+type GetTitleOriginChaptersQuery = {
+    title: string;
 };
 
 export async function registerTitleRoutes(
@@ -48,4 +56,18 @@ export async function registerTitleRoutes(
             return reply.code(500).send({ error: "Internal Server Error" });
         }
     });
+
+    app.get<{ Querystring: GetTitleOriginChaptersQuery }>(
+        "/origin-chapters/",
+        async (request, reply) => {
+            const query = request.query;
+            try {
+                const res = await fetch(
+                    `$https://api.cdnlibs.org/api/manga/${query.title}/chapters`
+                );
+            } catch (error: unknown) {
+                return reply.code(400).send("some error");
+            }
+        }
+    );
 }
