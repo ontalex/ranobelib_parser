@@ -8,9 +8,9 @@ async function main() {
     const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
     await mongoose.connect(uri, {
         serverSelectionTimeoutMS: 5000,
-        dbName: "fastify-ts-ranobe-parser",
-        user: "ruser1",
-        pass: "rpassw1",
+        dbName: process.env.MONGODB_NAME,
+        user: process.env.MONGODB_USERNAME,
+        pass: process.env.MONGODB_PASSWORD,
     });
 
     const examples = [
