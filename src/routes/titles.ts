@@ -4,6 +4,7 @@ import type {
     RequestGenericInterface,
 } from "fastify";
 import { Title } from "../models/Title";
+import { IChapters } from "../types/ranobelib_api/chapters";
 
 type CreateTitleBody = {
     name?: string;
@@ -12,8 +13,12 @@ type CreateTitleBody = {
     tags?: string[];
 };
 
-type GetTitleOriginChaptersQuery = {
+type TGetTitleOriginChaptersQuery = {
     title: string;
+};
+
+type TFindTitleQuery = {
+    name: string;
 };
 
 export async function registerTitleRoutes(
@@ -21,11 +26,13 @@ export async function registerTitleRoutes(
     _opts: FastifyPluginOptions
 ) {
     app.get("/", async () => {
-        const items = await Title.find()
-            .sort({ createdAt: -1 })
-            .limit(50)
-            .lean();
-        return { items };
+        const res = await fetch("https://api.cdnlibs.org/api/manga/6689--ascendance-of-a-bookworm-novel/chapters");
+        const data: IChapters = await res.json();
+        return data.data.filter((item, i) => {
+            if (item.branches.length !== 1) {
+                return item;
+            }
+        })
     });
 
     app.post<{ Body: CreateTitleBody }>("/", async (request, reply) => {
@@ -57,17 +64,37 @@ export async function registerTitleRoutes(
         }
     });
 
-    app.get<{ Querystring: GetTitleOriginChaptersQuery }>(
-        "/origin-chapters/",
+    app.get<{ Querystring: TGetTitleOriginChaptersQuery }>(
+        "/origin-chapters",
         async (request, reply) => {
             const query = request.query;
             try {
                 const res = await fetch(
-                    `$https://api.cdnlibs.org/api/manga/${query.title}/chapters`
+                    `https://api.cdnlibs.org/api/manga/${query.title}/chapters`
                 );
-            } catch (error: unknown) {
-                return reply.code(400).send("some error");
+                console.log("Chapters API data:", res);
+                return res.json();
+            } catch (error) {
+                console.error("Chapters API error:", error);
+                return reply.code(400).send("some error:", error);
             }
         }
     );
+
+    app.get<{Querystring: TFindTitleQuery}>(
+        "/find",
+        async (request, reply) => {
+            const query = request.query;
+            try {
+                const res = await fetch(
+                    `https://api.cdnlibs.org/api/manga?q=${query.name}&site_id[]=3`
+                );
+                console.log("Find title API data:", res);
+                return res.json();
+            } catch (error) {
+                console.error("Chapters API error:", error);
+                return reply.code(400).send("some error:", error);
+            }
+        }
+    )
 }
